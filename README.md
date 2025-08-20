@@ -1,11 +1,18 @@
 # Laravel Docker Template
 Too lazy to set up a stack for laravel in docker? Just copy this project and you have a working laravel stack.
 
+By default Laravel folder is located at the folder `web`, but you can change it by changing this line in `.env`
+``` bash
+LARAVEL_FOLDER=web
+```
+
 ## Configuration
-It's discouraged to edit the `docker-compose.yaml` and the `web/.env` file directly, this is the way you should do it.
+It's discouraged to edit the `docker-compose.yaml` and the `web/.env` file directly. Most of the app configuration is in `.env` file in the root of the project. 
+
+Before running the application, copy the `./env.example` file at the root of the project into a file named`.env`.
 
 ### Changing MySQL Credentials
-Editing the username and password for the stack should be done in [mysql/mysql.env](mysql/mysql.env)
+Editing the username and password for the stack should be done in `.env`
 
 ``` bash
 MYSQL_DATABASE=homestead
@@ -22,12 +29,21 @@ RUN docker-php-ext-install pdo pdo_mysql
 ```
 
 ### Using Redis/Mailhog/Phpmyadmin
-in [makefile](makefile)
-``` makefile
-USE_REDIS?=false
-USE_MAIL?=false
-USE_PHPMYADMIN?=false
+in `.env`
+``` bash
+USE_REDIS=false
+USE_MAIL=false
+USE_PHPMYADMIN=false
 ```
+
+### Increasing upload size
+If you want to increase file upload size, you should edit this following lines in `.env`
+``` bash
+NGINX_CLIENT_MAX_BODY_SIZE=100M
+PHP_UPLOAD_MAX_FILESIZE=100M
+PHP_POST_MAX_SIZE=100M
+```
+Be sure that `PHP_POST_MAX_SIZE`  is larger or equal than `NGINX_CLIENT_MAX_BODY_SIZE`
 
 ## Development
 
