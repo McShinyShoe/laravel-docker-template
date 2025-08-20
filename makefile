@@ -25,11 +25,11 @@ clean:
 	${DOCKER_COMPOSE} down
 
 init:
-	mkdir -p web
+	mkdir -p $(LARAVEL_FOLDER)
 	${DOCKER_COMPOSE} run --rm --build composer create-project ${LARAVEL_PKG} .
 
 purge:
-	sudo rm web -rf
+	sudo rm $(LARAVEL_FOLDER) -rf
 
 all: clean mysql $(REDIS_TARGET) $(MAIL_TARGET) ${PHPMYADMIN_TARGET}\
 	 nginx npm-build composer-install composer-migrate-fresh \
@@ -58,26 +58,26 @@ composer-key-generate:
 	docker compose run --build --rm artisan key:generate
 
 env:
-	cp web/.env.example web/.env
+	cp $(LARAVEL_FOLDER)/.env.example $(LARAVEL_FOLDER)/.env
 
-	sed -i 's/APP_NAME=Laravel/APP_NAME=${APP_NAME}/' web/.env
-	sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' web/.env
-	sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=mysql/' web/.env
-	sed -i 's/# DB_PORT=3306/DB_PORT=3306/' web/.env
-	sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=${MYSQL_DATABASE}/' web/.env
-	sed -i 's/# DB_USERNAME=root/DB_USERNAME=${MYSQL_USER}/' web/.env
-	sed -i 's/# DB_PASSWORD=/DB_PASSWORD=${MYSQL_PASSWORD}/' web/.env
+	sed -i 's/APP_NAME=Laravel/APP_NAME=${APP_NAME}/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/# DB_HOST=127.0.0.1/DB_HOST=mysql/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/# DB_PORT=3306/DB_PORT=3306/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/# DB_DATABASE=laravel/DB_DATABASE=${MYSQL_DATABASE}/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/# DB_USERNAME=root/DB_USERNAME=${MYSQL_USER}/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/# DB_PASSWORD=/DB_PASSWORD=${MYSQL_PASSWORD}/' $(LARAVEL_FOLDER)/.env
 	
 ifeq ($(USE_REDIS),true)
-	sed -i 's/REDIS_HOST=127.0.0.1/MAIL_HOST=redis/' web/.env
+	sed -i 's/REDIS_HOST=127.0.0.1/MAIL_HOST=redis/' $(LARAVEL_FOLDER)/.env
 endif
 	
 
 ifeq ($(USE_MAIL),true)
-	sed -i 's/MAIL_MAILER=log/MAIL_MAILER=smtp/' web/.env
-	sed -i 's/MAIL_HOST=127.0.0.1/MAIL_HOST=mailhog/' web/.env
-	sed -i 's/MAIL_PORT=2525/MAIL_PORT=1025/' web/.env
-	sed -i 's/MAIL_FROM_ADDRESS="hello@example.com"/MAIL_FROM_ADDRESS="no-reply@example.com"/' web/.env
+	sed -i 's/MAIL_MAILER=log/MAIL_MAILER=smtp/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/MAIL_HOST=127.0.0.1/MAIL_HOST=mailhog/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/MAIL_PORT=2525/MAIL_PORT=1025/' $(LARAVEL_FOLDER)/.env
+	sed -i 's/MAIL_FROM_ADDRESS="hello@example.com"/MAIL_FROM_ADDRESS="no-reply@example.com"/' $(LARAVEL_FOLDER)/.env
 endif
 
 redis:
