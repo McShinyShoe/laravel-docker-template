@@ -26,7 +26,7 @@ clean:
 
 init:
 	mkdir -p web
-	echo ${DOCKER_COMPOSE} run --rm --build composer create-project ${LARAVEL_PKG} .
+	${DOCKER_COMPOSE} run --rm --build composer create-project ${LARAVEL_PKG} .
 
 purge:
 	sudo rm web -rf
