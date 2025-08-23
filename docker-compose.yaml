@@ -9,7 +9,7 @@ services:
       && exec nginx -g 'daemon off;'"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template:ro
-      - ./web:/var/www/html
+      - ./${LARAVEL_FOLDER}:/var/www/html
     environment:
       NGINX_SERVER_NAME: ${NGINX_SERVER_NAME}
       NGINX_CLIENT_MAX_BODY_SIZE: ${NGINX_CLIENT_MAX_BODY_SIZE}
@@ -29,7 +29,7 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: ${PHP_UPLOAD_MAX_FILESIZE}
       PHP_POST_MAX_SIZE: ${PHP_POST_MAX_SIZE}
     volumes:
-      - ./web:/var/www/html
+      - ./${LARAVEL_FOLDER}:/var/www/html
       - ./php/php.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     networks:
       - laravel-net
@@ -59,7 +59,7 @@ services:
       dockerfile: composer.dockerfile
     container_name: "${APP_NAME}-composer"
     volumes:
-      - ./web:/var/www/html
+      - ./${LARAVEL_FOLDER}:/var/www/html
     networks:
       - laravel-net
   artisan:
@@ -68,7 +68,7 @@ services:
       dockerfile: php.dockerfile
     container_name: "${APP_NAME}-artisan"
     volumes:
-      - ./web:/var/www/html
+      - ./${LARAVEL_FOLDER}:/var/www/html
     ports:
       - "${ARTISAN_PORT}:8000"
     entrypoint: ["php", "/var/www/html/artisan"]
@@ -80,7 +80,7 @@ services:
     working_dir: /var/www/html
     entrypoint: ["npm"]
     volumes:
-      - ./web:/var/www/html
+      - ./${LARAVEL_FOLDER}:/var/www/html
     networks:
       - laravel-net
   redis:

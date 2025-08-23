@@ -88,5 +88,5 @@ make clean
 
 ### Purge
 ``` bash
-make purge # Will remove the `web` directory
+make purge # Will remove the LARAVEL_FOLDER directory
 ```
