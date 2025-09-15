@@ -17,9 +17,17 @@ ifeq ($(USE_PHPMYADMIN),true)
 PHPMYADMIN_TARGET := phpmyadmin
 endif
 
+ifdef DOCKER_COMPOSE_OVERRIDE
+	DOCKER_COMPOSE_FILE := -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE)
+else
+	DOCKER_COMPOSE_FILE := -f $(DOCKER_COMPOSE_FILE)
+endif
+
+DOCKER_COMPOSE := $(DOCKER_COMPOSE_COMMAND)$(DOCKER_COMPOSE_FILE)
+
 .PHONY: clean init purge all mysql nginx npm-build composer-install
 		composer-migrate-fresh composer-seed composer-key-generate env
-		redis mailhog phpmyadmin
+		override redis mailhog phpmyadmin
 
 clean:
 	${DOCKER_COMPOSE} down
@@ -34,7 +42,7 @@ start: mysql $(REDIS_TARGET) $(MAIL_TARGET) ${PHPMYADMIN_TARGET} \
 purge:
 	sudo rm $(LARAVEL_FOLDER) -rf
 
-all: clean start npm-build composer-install composer-migrate-fresh \
+all: override clean start npm-build composer-install composer-migrate-fresh \
 	 composer-seed composer-key-generate
 
 mysql:
@@ -80,6 +88,11 @@ ifeq ($(USE_MAIL),true)
 	sed -i 's/MAIL_HOST=127.0.0.1/MAIL_HOST=mailhog/' $(LARAVEL_FOLDER)/.env
 	sed -i 's/MAIL_PORT=2525/MAIL_PORT=1025/' $(LARAVEL_FOLDER)/.env
 	sed -i 's/MAIL_FROM_ADDRESS="hello@example.com"/MAIL_FROM_ADDRESS="no-reply@example.com"/' $(LARAVEL_FOLDER)/.env
+endif
+
+override:
+ifdef DOCKER_COMPOSE_OVERRIDE
+	cp -n $(DOCKER_COMPOSE_OVERRIDE).example $(DOCKER_COMPOSE_OVERRIDE)
 endif
 
 redis:
