@@ -28,11 +28,13 @@ init:
 	mkdir -p $(LARAVEL_FOLDER)
 	${DOCKER_COMPOSE} run --rm --build composer create-project ${LARAVEL_PKG} .
 
+start: mysql $(REDIS_TARGET) $(MAIL_TARGET) ${PHPMYADMIN_TARGET} \
+       nginx
+
 purge:
 	sudo rm $(LARAVEL_FOLDER) -rf
 
-all: clean mysql $(REDIS_TARGET) $(MAIL_TARGET) ${PHPMYADMIN_TARGET}\
-	 nginx npm-build composer-install composer-migrate-fresh \
+all: clean start npm-build composer-install composer-migrate-fresh \
 	 composer-seed composer-key-generate
 
 mysql:
